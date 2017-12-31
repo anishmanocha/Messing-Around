@@ -4,6 +4,16 @@ import java.util.List;
 
 public class League {
 	
+	private int leagueId;
+	
+	public int getLeagueId() {
+		return leagueId;
+	}
+
+	public void setLeagueId(int leagueId) {
+		this.leagueId = leagueId;
+	}
+
 	private String leagueName;
 	
 	private List<Player> listOfPlayers; 

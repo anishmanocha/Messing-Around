@@ -4,6 +4,16 @@ import java.util.List;
 
 public class Match {
 	
+	private int matchId;
+	
+	public int getMatchId() {
+		return matchId;
+	}
+
+	public void setMatchId(int matchId) {
+		this.matchId = matchId;
+	}
+
 	private Player playerOne;
 	
 	private Player playerTwo;

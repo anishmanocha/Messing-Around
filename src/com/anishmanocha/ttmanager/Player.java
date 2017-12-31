@@ -1,6 +1,8 @@
 package com.anishmanocha.ttmanager;
 
-public class Player {
+public class Player{
+	
+	private int playerId;
 	
 	private String firstName;
 	
@@ -10,7 +12,9 @@ public class Player {
 	
 	private String email;
 	
-	public Player(String firstName, String lastName, int rating, String email) {
+	public Player(int playerId, String firstName, String lastName, int rating, String email) {
+		
+		this.playerId= playerId;
 		
 		this.firstName= firstName;
 		
@@ -20,6 +24,8 @@ public class Player {
 		
 		this.email=email;
 	}
+	
+	
 	
 	
 	//Getters and Setters
@@ -55,6 +61,15 @@ public class Player {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public int getPlayerId() {
+		return playerId;
+	}
+
+
+	public void setPlayerId(int playerId) {
+		this.playerId = playerId;
+	}
 
 
 	@Override
@@ -62,6 +77,9 @@ public class Player {
 		return "Player [firstName=" + firstName + ", lastName=" + lastName + ", rating=" + rating + ", email=" + email
 				+ "]";
 	}
+
+
+
 	
 	
 	
