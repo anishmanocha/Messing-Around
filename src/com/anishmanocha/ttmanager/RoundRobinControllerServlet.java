@@ -87,7 +87,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 		
 		List<Integer> listOfPlayerIds= new ArrayList<Integer>();
 		
-		int numberOfPlayersPerRoundRobinPool;
+		int numberOfPlayersPerRoundRobinPool=0;
 		
 		try {
 			
@@ -216,6 +216,27 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				
 				//Determine # of individuals per pool on the server side
 				
+				String query = "Select count(FKidPlayer) from RoundRobinPoolPlayer where FKidRoundRobinPool = ?";
+
+				connection = datasource.getConnection();
+
+				statement = connection.prepareStatement(query);
+
+				statement.setInt(1, listOfRoundRobinPoolsId.get(i));
+
+				ResultSet results = statement.executeQuery();
+
+				while (results.next()) {
+					
+					numberOfPlayersPerRoundRobinPool= results.getInt(1);
+					
+					if(numberOfPlayersPerRoundRobinPool<results.getInt(1)) {
+						
+						numberOfPlayersPerRoundRobinPool= results.getInt(1);
+					}
+
+				}
+				
 			}
 			
 			catch(Exception e) {
@@ -223,11 +244,17 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 			
+			finally {
+				
+				close(connection, statement, results);
+			}
 			
 			
 			
 			
 		}
+		
+		System.out.println("The number of players per round robin pool is " + numberOfPlayersPerRoundRobinPool);
 		
 		int firstPlayerCounter=0;
 		
@@ -251,7 +278,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				
 				statement.execute();
 				
-				if (secondPlayerCounter < (listOfPlayerIds.size()-1)) {
+				if (secondPlayerCounter < (numberOfPlayersPerRoundRobinPool-1)) {
 					
 					secondPlayerCounter++;
 				}
