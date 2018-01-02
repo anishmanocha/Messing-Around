@@ -81,7 +81,13 @@ public class RoundRobinControllerServlet extends HttpServlet {
 		
 		int leagueNightId =Integer.parseInt(request.getParameter("leagueNightId"));
 		
-		ArrayList<Integer>listOfRoundRobinPoolsId= new ArrayList<Integer>();
+		ArrayList<Integer> listOfRoundRobinPoolsId= new ArrayList<Integer>();
+		
+		ArrayList<Integer> listOfMatchIds= new ArrayList<Integer>();
+		
+		List<Integer> listOfPlayerIds= new ArrayList<Integer>();
+		
+		int numberOfPlayersPerRoundRobinPool;
 		
 		try {
 			
@@ -122,7 +128,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				
 				results= statement.executeQuery();
 				
-				List<Integer> listOfPlayerIds= new ArrayList<Integer>();
+				
 				
 				while (results.next()) {
 					
@@ -133,7 +139,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				}
 				
 				
-				for (int j=0; j<listOfPlayerIds.size(); j++) {
+				/*for (int j=0; j<listOfPlayerIds.size(); j++) {
 					
 					for (int k=j+1; k<listOfPlayerIds.size(); k++) {
 						
@@ -161,7 +167,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 						}
 						
 					}
-				}
+				}*/
 				
 			}
 			
@@ -175,6 +181,99 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				close(connection, statement, results);
 			}
 			
+			try {
+				
+				String query= "Select idMatch from ttmanager.Match where FKRRPool= ?";
+				
+				connection=datasource.getConnection();
+				
+				statement=connection.prepareStatement(query);
+				
+				statement.setInt(1, listOfRoundRobinPoolsId.get(i));
+				
+				results= statement.executeQuery();
+				
+				while (results.next()) {
+					
+					listOfMatchIds.add(results.getInt(1));
+					
+				}
+				
+			
+				
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			finally {
+				
+				close(connection, statement, results);
+			}
+			
+			
+			try {
+				
+				//Determine # of individuals per pool on the server side
+				
+			}
+			
+			catch(Exception e) {
+				
+				e.printStackTrace();
+			}
+			
+			
+			
+			
+			
+		}
+		
+		int firstPlayerCounter=0;
+		
+		int secondPlayerCounter= firstPlayerCounter +1;
+		
+		for (int i=0; i<listOfMatchIds.size(); i++) {
+			
+			try {
+				
+				String sql= "Insert into PlayerMatch(pmPlayer1FK, OtherPlayerFK, pmMatchFK) values (?, ?, ?)";
+				
+				connection=datasource.getConnection();
+				
+				statement= connection.prepareStatement(sql);
+				
+				statement.setInt(1, listOfPlayerIds.get(firstPlayerCounter));
+				
+				statement.setInt(2, listOfPlayerIds.get(secondPlayerCounter));
+				
+				statement.setInt(3, listOfMatchIds.get(i));
+				
+				statement.execute();
+				
+				if (secondPlayerCounter < (listOfPlayerIds.size()-1)) {
+					
+					secondPlayerCounter++;
+				}
+				
+				else {
+					
+					firstPlayerCounter++;
+					
+					secondPlayerCounter=firstPlayerCounter +1;
+				}
+				
+			}
+			
+			catch(Exception e) {
+				
+				e.printStackTrace();
+			}
+			
+			finally {
+				
+				close(connection, statement, results);
+			}
 		}
 		
 	}
@@ -273,6 +372,9 @@ public class RoundRobinControllerServlet extends HttpServlet {
 
 			e.printStackTrace();
 		}
+		
+		
+		
 
 	}
 
