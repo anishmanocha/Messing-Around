@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -22,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+
+import org.apache.commons.math3.util.Combinations;
 
 @WebServlet("/RoundRobinControllerServlet")
 public class RoundRobinControllerServlet extends HttpServlet {
@@ -260,7 +263,21 @@ public class RoundRobinControllerServlet extends HttpServlet {
 		
 		int secondPlayerCounter= firstPlayerCounter +1;
 		
-		for (int i=0; i<listOfMatchIds.size(); i++) {
+		Combinations combinationsObject= new Combinations(4,2);
+		
+		int count=0;
+		
+		while (combinationsObject.iterator().hasNext()) {
+			count++;
+		}
+		
+		System.out.println("The number of combinations is " );
+		
+		
+		
+		/*for (int i=0; i<listOfMatchIds.size(); i++) {
+			
+			int numberTraversed= 0;
 			
 			try {
 				
@@ -301,7 +318,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				
 				close(connection, statement, results);
 			}
-		}
+		}*/
 		
 	}
 
