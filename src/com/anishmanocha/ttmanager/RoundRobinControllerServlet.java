@@ -30,8 +30,12 @@ import javax.sql.DataSource;
 
 import org.apache.commons.math3.util.Combinations;
 
-//import com.google.common.collect.ArrayListMultimap;
-//import com.google.common.collect.Multimap;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
+
+
+
 
 @WebServlet("/RoundRobinControllerServlet")
 public class RoundRobinControllerServlet extends HttpServlet {
@@ -276,11 +280,11 @@ public class RoundRobinControllerServlet extends HttpServlet {
 		
 		int factorOfNumberOfPlayersPerRoundRobinPool= numberOfPlayersPerRoundRobinPool;
 		
-		ConcurrentHashMap<Integer, Integer> mapOfPlayerIdsInMatches= new ConcurrentHashMap<Integer, Integer>();
+		Multimap<Integer, Integer> mapOfPlayerIdsInMatches= ArrayListMultimap.create();
 		
 		Set<Integer> firstColumnPlayerIdsInMatches= mapOfPlayerIdsInMatches.keySet();
 		
-		//Multimap<String, String> mapOfPlayersInMatches= ArrayListMultimap.create();
+		Multimap<String, String> mapOfPlayersInMatches= ArrayListMultimap.create();
 		
 		List<Player> listOfPlayersToSendToFrontEndFirstPlayer= new ArrayList<Player>();
 		
@@ -409,9 +413,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 		
 		System.out.println("The number of players in matches is " + mapOfPlayerIdsInMatches.size());
 		
-		for (Entry<Integer, Integer> entry : mapOfPlayerIdsInMatches.entrySet()) {
-		    System.out.println(entry.getKey()+" : "+entry.getValue());
-		}
+		
 		
 		
 		
@@ -427,7 +429,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				
 				statement= connection.prepareStatement(query);
 				
-				statement.setInt(1, (int) mapOfPlayerIdsInMatches.keySet().toArray()[i]);
+				statement.setInt(1, (int) mapOfPlayerIdsInMatches.keys().toArray()[i]);
 				
 				results=statement.executeQuery();
 				
@@ -453,7 +455,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				
 				statement= connection.prepareStatement(query);
 				
-				statement.setInt(1, (int) mapOfPlayerIdsInMatches.keySet().toArray()[i]);
+				statement.setInt(1, (int) mapOfPlayerIdsInMatches.values().toArray()[i]);
 				
 				results=statement.executeQuery();
 				
@@ -490,12 +492,10 @@ public class RoundRobinControllerServlet extends HttpServlet {
 		for (int i=0; i<listOfPlayersToSendToFrontEndFirstPlayer.size(); i++) {
 			
 			System.out.println(listOfPlayersToSendToFrontEndFirstPlayer.get(i).getFirstName());
-		}
-		
-		for (int i=0; i<listOfPlayersToSendToFrontEndSecondPlayer.size(); i++) {
 			
 			System.out.println(listOfPlayersToSendToFrontEndSecondPlayer.get(i).getFirstName());
 		}
+		
 		
 	}
 

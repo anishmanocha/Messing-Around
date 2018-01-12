@@ -39,5 +39,8 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Users/anishmanocha/Downloads/guava-20.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="/Users/anishmanocha/Downloads/guava-20.0-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/anishmanocha/Downloads/guava-20.0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
