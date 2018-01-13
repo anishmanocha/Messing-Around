@@ -101,6 +101,8 @@ public class RoundRobinControllerServlet extends HttpServlet {
 		
 		List<Integer> listOfPlayerIds= new ArrayList<Integer>();
 		
+		ArrayList<Pair> listOfPlayersInMatches= new ArrayList<Pair>();
+		
 		int numberOfPlayersPerRoundRobinPool=0;
 		
 		try {
@@ -276,21 +278,23 @@ public class RoundRobinControllerServlet extends HttpServlet {
 		
 		long numberOfCombinations= getCom(numberOfPlayersPerRoundRobinPool,2);
 		
+		long dividingNumber= numberOfCombinations *2;
+		
 		int numberTraversed= 0;
 		
 		int factorOfNumberOfPlayersPerRoundRobinPool= numberOfPlayersPerRoundRobinPool;
 		
-		Multimap<Integer, Integer> mapOfPlayerIdsInMatches= ArrayListMultimap.create();
+		//Multimap<Integer, Integer> mapOfPlayerIdsInMatches= ArrayListMultimap.create();
 		
-		Set<Integer> firstColumnPlayerIdsInMatches= mapOfPlayerIdsInMatches.keySet();
+		//Set<Integer> firstColumnPlayerIdsInMatches= mapOfPlayerIdsInMatches.keySet();
 		
-		Multimap<String, String> mapOfPlayersInMatches= ArrayListMultimap.create();
+		//Multimap<String, String> mapOfPlayersInMatches= ArrayListMultimap.create();
 		
-		List<Player> listOfPlayersToSendToFrontEndFirstPlayer= new ArrayList<Player>();
+		List<Player> listOfPlayersToSendToFrontEnd= new ArrayList<Player>();
 		
-		List<Player> listOfPlayersToSendToFrontEndSecondPlayer= new ArrayList<Player>();
 		
-		System.out.println("The number of combinations is " + getCom(4,2));
+		
+		System.out.println("The number of combinations is " + getCom(3,2));
 		
 		/*for (int i=0; i<listOfMatchIds.size(); i++) {
 			
@@ -388,7 +392,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				
 				while(results.next()) {
 				
-					mapOfPlayerIdsInMatches.put(results.getInt(1), results.getInt(2));
+					listOfPlayersInMatches.add(new Pair(results.getInt(1), results.getInt(2)));
 					
 					System.out.println("First player " + results.getInt(1));
 					
@@ -411,14 +415,19 @@ public class RoundRobinControllerServlet extends HttpServlet {
 			
 		}
 		
-		System.out.println("The number of players in matches is " + mapOfPlayerIdsInMatches.size());
+		System.out.println("The number of players in matches is " + listOfPlayersInMatches.size());
+		
+		
+		for (int i=0; i<listOfPlayersInMatches.size(); i++) {
+			
+			System.out.println("Key " + i + "  is " + listOfPlayersInMatches.get(i).getKey());
+			
+			System.out.println("Value " + i + " is " + listOfPlayersInMatches.get(i).getValue());
+		}
 		
 		
 		
-		
-		
-		
-		for (int i=0; i<mapOfPlayerIdsInMatches.size(); i++) {
+		for (int i=0; i<listOfPlayersInMatches.size(); i++) {
 			
 			String query= "Select * from Player where idPlayer= ?";
 			
@@ -429,7 +438,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				
 				statement= connection.prepareStatement(query);
 				
-				statement.setInt(1, (int) mapOfPlayerIdsInMatches.keys().toArray()[i]);
+				statement.setInt(1, listOfPlayersInMatches.get(i).getKey());
 				
 				results=statement.executeQuery();
 				
@@ -447,7 +456,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				
 					Player player= new Player(firstPlayerId, firstPlayerFirstName, firstPlayerLastName, firstPlayerRating, firstPlayerEmail);
 				
-					listOfPlayersToSendToFrontEndFirstPlayer.add(player);
+					listOfPlayersToSendToFrontEnd.add(player);
 				
 				}
 				
@@ -455,7 +464,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				
 				statement= connection.prepareStatement(query);
 				
-				statement.setInt(1, (int) mapOfPlayerIdsInMatches.values().toArray()[i]);
+				statement.setInt(1, listOfPlayersInMatches.get(i).getValue());
 				
 				results=statement.executeQuery();
 				
@@ -473,7 +482,7 @@ public class RoundRobinControllerServlet extends HttpServlet {
 				
 					Player secondPlayer= new Player(secondPlayerId, secondPlayerFirstName, secondPlayerLastName, secondPlayerRating, secondPlayerEmail);
 				
-					listOfPlayersToSendToFrontEndSecondPlayer.add(secondPlayer);
+					listOfPlayersToSendToFrontEnd.add(secondPlayer);
 				
 				}
 		
@@ -489,11 +498,28 @@ public class RoundRobinControllerServlet extends HttpServlet {
 			
 		}
 		
-		for (int i=0; i<listOfPlayersToSendToFrontEndFirstPlayer.size(); i++) {
+		for (int i=0; i<listOfPlayersToSendToFrontEnd.size(); i++) {
 			
-			System.out.println(listOfPlayersToSendToFrontEndFirstPlayer.get(i).getFirstName());
+			System.out.println(listOfPlayersToSendToFrontEnd.get(i).getFirstName());
 			
-			System.out.println(listOfPlayersToSendToFrontEndSecondPlayer.get(i).getFirstName());
+		}
+		
+		request.setAttribute("listOfPlayers", listOfPlayersToSendToFrontEnd);
+		
+		request.setAttribute("dividingNumber", dividingNumber);
+		
+		request.setAttribute("numberOfRoundRobinPools", listOfRoundRobinPoolsId.size());
+		
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/roundrobin-pairings.jsp");
+		
+		try {
+			dispatcher.forward(request, response);
+		} catch (ServletException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
 		}
 		
 		
