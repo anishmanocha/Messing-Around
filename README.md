@@ -1,5 +1,2 @@
-# TTManager
-
-Hello,
-
-My Table Tennis League Management App is in progress.  Stay tuned!
+# Messing-Aroung
+Just messing around here
